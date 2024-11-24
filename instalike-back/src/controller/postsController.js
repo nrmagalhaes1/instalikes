@@ -1,4 +1,5 @@
 import {getTodosPosts, criarPost, atualizarPost} from "../models/postsModel.js";
+import { deletarPost as deletarPostModelo } from "../models/postsModel.js";
 import fs from "fs";
 import gerarDescricaoComGemini from "../services/geminiService.js";
 
@@ -58,5 +59,23 @@ export async function atualizarNovoPost(req, res) {
     } catch(erro) {
         console.error(erro.message);
         res.status(500).json({"Erro":"Falha na requisição"})
+    }
+}
+
+export async function deletarPost(req, res) {
+    const id = req.params.id;
+
+    try {
+        // Chama a função deletarPost do modelo para deletar o post
+        const resultado = await deletarPostModelo(id);
+
+        if (resultado.deletedCount === 0) {
+            return res.status(404).json({ "Erro": "Post não encontrado" });
+        }
+
+        res.status(200).json({ "Mensagem": "Post deletado com sucesso" });
+    } catch (erro) {
+        console.error(erro.message);
+        res.status(500).json({ "Erro": "Falha na requisição" });
     }
 }
